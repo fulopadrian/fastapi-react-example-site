@@ -1,11 +1,11 @@
 // Enumerations
-enum TaskStates {
+export enum TaskStates {
     todo = "To Do",
     in_progress = "In Progress",
     done = "Done"
 }
 
-enum TaskPriorities {
+export enum TaskPriorities {
     high = "high",
     medium = "medium",
     low = "low"
@@ -13,9 +13,9 @@ enum TaskPriorities {
 
 // Types
 export type TaskProps = {
-    _id: string;
+    id: string;
     description: string;
-    priority: string;
-    state: string;
-    due_date: string;
+    priority: TaskPriorities;
+    state: TaskStates;
+    due_date: Date | null;
 }

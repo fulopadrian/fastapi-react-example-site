@@ -1,33 +1,37 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import './App.css';
-import Task from './components/Task';
 import { TaskProps } from './models/Types';
+import Task from './components/Task';
 import { getAllTasks } from './services/Api';
-// import data from './models/TestData';
 
 const App = () => {
-  const [tasks, setTasks] = useState<TaskProps[] | null>();
+  const [tasks, setTasks] = useState<TaskProps[]>();
 
   useEffect(() => {
     getAllTasks()
     .then(data => {
       setTasks(data);
-    });
+    })
+    .catch(error => console.log(error));
   }, []);
+  
+  const displayTasks = (task: TaskProps) => {
+    return (
+    <Task 
+      key={task.id}
+      id={task.id}
+      description={task.description}
+      priority={task.priority}
+      state={task.state}
+      due_date={task.due_date}
+    />
+    );
+  }
 
   return (
     <div className="App">
-      {tasks.map((item) => (
-        <Task 
-          key={item._id}
-          _id={item._id}
-          description={item.description}
-          priority={item.priority}
-          state={item.state}
-          due_date={item.due_date}
-        />
-      ))}
+      {!tasks ? "Loading..." : tasks.map(displayTasks)}
     </div>
   );
 }

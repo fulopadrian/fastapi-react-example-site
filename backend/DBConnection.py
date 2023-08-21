@@ -1,19 +1,25 @@
-#TODO: odmantic import throws an error. Need to fix it, otherwise can't use it
+"""
+This code defines the connection to the cloud mongodb server
+"""
 
 # Imports
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.server_api import ServerApi
-#from odmantic import AIOEngine
+from odmantic import AIOEngine
 
+# Credentials
 # For testing only!
 username = "afulop"
 password = "afulop"
+db_name = "todo_app"
 
-uri = "mongodb+srv://%s:%s@myatlasclusteredu.o8pxm9b.mongodb.net/?retryWrites=true&w=majority" %(username, password)
+# DB uri
+uri = "mongodb+srv://%s:%s@test.i5oypyn.mongodb.net/?retryWrites=true&w=majority" %(username, password)
 
 # Create a new client and connect to the server
 client = AsyncIOMotorClient(uri, server_api=ServerApi('1'))
-#engine = AIOEngine(client=client, database="sample_mflix")
+# Create async engine
+engine = AIOEngine(client, database=db_name)
 
 if __name__ == "__main__":
     # Send a ping to confirm a successful connection

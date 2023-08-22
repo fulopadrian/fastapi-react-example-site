@@ -18,4 +18,5 @@ export type TaskProps = {
     priority: TaskPriorities;
     state: TaskStates;
     due_date: Date | null;
+    newTask?: boolean;
 }

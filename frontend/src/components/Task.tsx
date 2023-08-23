@@ -1,28 +1,32 @@
-import React, { ChangeEventHandler, EventHandler, FormEvent, FormEventHandler } from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { TaskProps, TaskStates, TaskPriorities } from "../models/Types";
-import { updateTask } from "../services/Api";
+import { deleteTask, updateTask } from "../services/Api";
 
-const Task = (props: TaskProps) => {
+const Task = ({task, newTask, onTaskChange, signUpdate}: {task?: TaskProps, newTask: boolean, onTaskChange: Function, signUpdate: Function}) => {
     const [editState, setEditState] = useState<boolean>(false);
     const [taskId, setTaskId] = useState<string>("");
     const [taskState, setTaskState] = useState<TaskStates>(TaskStates.todo);
     const [taskPriority, setTaskPriority] = useState<TaskPriorities>(TaskPriorities.medium);
     const [taskDescription, setTaskDescription] = useState<string>("");
-
-    //TODO:
-    //Create a state that is true, if update (rerender) is needed, like after a task update, delete or create
-    //Use this state to rerender if needed
+    const [taskDueDate, setTaskDueDate] = useState<Date | null>();
 
     // Hooks
     useEffect(() => {
-        if (editState == true) {
-            setTaskId(props.id)
-            setTaskState(props.state);
-            setTaskPriority(props.priority);
-            setTaskDescription(props.description);
+        if (editState == true && task !== undefined) {
+            setTaskId(task.id)
+            setTaskState(task.state);
+            setTaskPriority(task.priority);
+            setTaskDescription(task.description);
+            setTaskDueDate(task.due_date);
         }
     }, [editState]);
+
+    useEffect(() => {
+        if (newTask == true) {
+            flipEditState();   
+        }
+    }, []);
 
     // Functions
     const flipEditState = () => {
@@ -46,21 +50,33 @@ const Task = (props: TaskProps) => {
         setTaskDescription(event.target.value);
     }
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = async (event: any) => {
         event.preventDefault();
         //TODO: store new task
-        if (props.newTask == false) {
+        if (newTask == false) {
             const patch = {
                 id: taskId,
                 description: taskDescription,
                 priority: taskPriority,
                 state: taskState,
-                due_date: props.due_date
+                due_date: taskDueDate
             }
 
-            updateTask(taskId, patch);
+            const updatedTask = await updateTask(taskId, patch);
+
+            onTaskChange(((prevTasks: TaskProps[]) => [...prevTasks, {updatedTask}]));
+            signUpdate();
         }
         flipEditState();
+    }
+
+    const handleDelete = async (event: any) => {
+        if (newTask == false) {
+            const deletedTask = await deleteTask(taskId);
+
+            onTaskChange((prevTasks: TaskProps[]) => {return prevTasks.filter(task => task.id !== taskId)});
+            signUpdate();
+        }
     }
 
     return (
@@ -69,12 +85,11 @@ const Task = (props: TaskProps) => {
         <div onClick={flipEditState}>
             <div>
                 <label>State</label>
-                <div>{props?.state}</div>
+                <div>{task?.state}</div>
                 <label>Priority</label>
-                <div>{props?.priority}</div>
-                <div>X</div>
+                <div>{task?.priority}</div>
             </div>
-            <p>{props?.description}</p>
+            <p>{task?.description}</p>
             <hr />
         </div>
         :
@@ -93,6 +108,7 @@ const Task = (props: TaskProps) => {
                     <option value={TaskPriorities.low}>{TaskPriorities.low}</option>
                 </select>
                 <div onClick={flipEditState}>X</div>
+                {!newTask ? <div onClick={handleDelete}>D</div> : <></>}
             </div>
             <textarea value={taskDescription} onChange={handleDescritpionChange}/>
             <input type="submit" />

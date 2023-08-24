@@ -4,7 +4,6 @@ import '../App.css';
 import { TaskProps } from '../models/Types';
 import Task from './Task';
 import { getAllTasks } from '../services/Api';
-import CreateTask from './CreateTask';
 
 const Home = () => {
   const [tasks, setTasks] = useState<TaskProps[]>();
@@ -13,10 +12,12 @@ const Home = () => {
 
   // Hooks
   useEffect(() => {
+  // Get all tasks from the db to display
+  // Triggers every time an update (updated state changes) happens (update, delete, create)
     const fetchAllTasks = async () => {
       const data = await getAllTasks();
-
-      setTasks(data); 
+      
+      setTasks(data);
     }
 
     try {
@@ -25,10 +26,14 @@ const Home = () => {
     catch(err) {
       console.log(err);
     }
+
+    setAddTask(false);
   }, [updated]);
   
   // Functions
   const flipUpdated = () => {
+  // Changes the updated state
+  // the state itself does not matter, only that it is changed
     if (updated == false) {
       setUpdated(true);
     } else {
@@ -37,6 +42,7 @@ const Home = () => {
   }
 
   const flipAddTask = () => {
+  // Changes the addTask state
     if (addTask == false) {
       setAddTask(true);
     } else {
@@ -45,14 +51,25 @@ const Home = () => {
   }
 
   const displayTasks = (task: TaskProps) => {
+  // Renders a Task component to display a task
     return (
     <Task
         key={task.id}
         task={task}
-        newTask={false}
-        onTaskChange={setTasks}
+        isNewTask={false}
         signUpdate={flipUpdated}
     />
+    );
+  }
+
+  const createTask = () => {
+  // Renders an editable Task component to create a new task
+    return (
+      <Task
+        isNewTask={addTask}
+        onCancelCreate={flipAddTask}
+        signUpdate={flipUpdated}
+      />
     );
   }
 
@@ -63,13 +80,7 @@ const Home = () => {
       :
       tasks.map(displayTasks)
     }
-    {!addTask ? <button onClick={flipAddTask}>Add new task</button>
-    :
-    <CreateTask
-        newTask={addTask}
-        onTaskChange={setTasks}
-        signUpdate={flipUpdated}
-    />}
+    {!addTask ? <button onClick={flipAddTask}>Add new task</button> : createTask()}
     </div>
   );
 }

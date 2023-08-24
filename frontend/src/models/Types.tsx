@@ -13,10 +13,9 @@ export enum TaskPriorities {
 
 // Types
 export type TaskProps = {
-    id: string;
+    id?: string;
     description: string;
     priority: TaskPriorities;
     state: TaskStates;
-    due_date: Date | null | undefined;
-    newTask?: boolean;
+    due_date: Date | undefined;
 }

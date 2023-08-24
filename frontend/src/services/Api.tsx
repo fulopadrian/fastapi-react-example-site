@@ -13,6 +13,7 @@ enum ApiEndpoints {
 }
 
 // API functions
+// Create task
 export const createTask = async (task:TaskProps) => {
     try {
         const res = await fetch(api_url + ApiEndpoints.createTask, {
@@ -28,6 +29,7 @@ export const createTask = async (task:TaskProps) => {
     }
 }
 
+// Get all tasks
 export const getAllTasks = async () => {
     try {
         const res = await fetch(api_url + ApiEndpoints.getAllTasks);
@@ -39,6 +41,7 @@ export const getAllTasks = async () => {
     }
 }
 
+// Get one task by id
 export const getTask = async (id: string) => {
     try {
         const res = await fetch(api_url + ApiEndpoints.getTask + "?id=" + id);
@@ -50,7 +53,8 @@ export const getTask = async (id: string) => {
     }
 }
 
-export const updateTask = async (id: string, task: TaskProps) => {
+// Update task by id
+export const updateTask = async (id: string | undefined, task: TaskProps) => {
     try {
         const res = await fetch(api_url + ApiEndpoints.updateTask + "?id=" + id, {
             method: "PATCH",
@@ -65,7 +69,8 @@ export const updateTask = async (id: string, task: TaskProps) => {
     }
 }
 
-export const deleteTask = async (id: string) => {
+// Delete task by id
+export const deleteTask = async (id: string | undefined) => {
     try {
         const res = await fetch(api_url + ApiEndpoints.deleteTask + "?id=" + id, {
             method: "DELETE",

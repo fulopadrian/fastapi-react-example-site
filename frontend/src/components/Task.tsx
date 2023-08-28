@@ -2,6 +2,10 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { TaskProps, TaskStates, TaskPriorities } from "../models/Types";
 import { deleteTask, updateTask, createTask } from "../services/Api";
+import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 const Task = ({task, isNewTask, onCancelCreate, signUpdate}: {task?: TaskProps, isNewTask: boolean, onCancelCreate?: Function, signUpdate: Function}) => {
     const [editState, setEditState] = useState<boolean>(false);
@@ -41,19 +45,19 @@ const Task = ({task, isNewTask, onCancelCreate, signUpdate}: {task?: TaskProps, 
         }
     }
 
-    const handleStateChange = (event: any) => {
-        setTaskState(event.target.value);
+    const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setTaskState(event.currentTarget.value as TaskStates);
     }
 
-    const handlePriorityChange = (event: any) => {
-        setTaskPriority(event.target.value);
+    const handlePriorityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setTaskPriority(event.currentTarget.value as TaskPriorities);
     }
 
-    const handleDescritpionChange = (event: any) => {
-        setTaskDescription(event.target.value);
+    const handleDescritpionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setTaskDescription(event.currentTarget.value);
     }
 
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async (event: React.FormEvent) => {
     // Handels the submit of the form
     // Either updates a task in db or creates a new one
         event.preventDefault();
@@ -98,38 +102,42 @@ const Task = ({task, isNewTask, onCancelCreate, signUpdate}: {task?: TaskProps, 
     return (
         <>
         {!editState ?
-        <div onClick={flipEditState}>
-            <div>
-                <label>State</label>
-                <div>{task?.state}</div>
-                <label>Priority</label>
-                <div>{task?.priority}</div>
-            </div>
-            <p>{task?.description}</p>
-            <hr />
-        </div>
+        <Card border="light" bg="dark" text="white" className="mb-2" onClick={flipEditState}>
+            <Card.Header>
+                <Card.Subtitle>State: {task?.state}</Card.Subtitle>
+                <Card.Subtitle>Priority: {task?.priority}</Card.Subtitle>
+            </Card.Header>
+            <Card.Body>
+                <Card.Text className="task-description">{task?.description}</Card.Text>
+            </Card.Body>
+        </Card>
         :
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>State</label>
-                <select value={taskState} onChange={handleStateChange}>
+        <Form onSubmit={handleSubmit}>
+            <hr />
+            <Form.Group>
+                <Form.Label>State</Form.Label>
+                <Form.Select value={taskState} onChange={handleStateChange}>
                     <option value={TaskStates.todo}>{TaskStates.todo}</option>
                     <option value={TaskStates.in_progress}>{TaskStates.in_progress}</option>
                     <option value={TaskStates.done}>{TaskStates.done}</option>
-                </select>
-                <label>Priority</label>
-                <select value={taskPriority} onChange={handlePriorityChange}>
+                </Form.Select>
+            </Form.Group>
+            <Form.Group>
+                <Form.Label>Priority</Form.Label>
+                <Form.Select value={taskPriority} onChange={handlePriorityChange}>
                     <option value={TaskPriorities.high}>{TaskPriorities.high}</option>
                     <option value={TaskPriorities.medium}>{TaskPriorities.medium}</option>
                     <option value={TaskPriorities.low}>{TaskPriorities.low}</option>
-                </select>
-                {!isNewTask ? <div onClick={flipEditState}>X</div> : <div onClick={() => {if (onCancelCreate !== undefined) {onCancelCreate();}}}>X</div>}
-                {!isNewTask ? <div onClick={handleDelete}>D</div> : <></>}
-            </div>
-            <textarea value={taskDescription} onChange={handleDescritpionChange}/>
-            <input type="submit" />
+                </Form.Select>
+            </Form.Group>
+            <Form.Control className="mt-2 mb-2" as="textarea" rows={3} type="text" value={taskDescription} onChange={handleDescritpionChange}/>
+            <ButtonGroup>
+                <Button type="submit">Save</Button>
+                {!isNewTask ? <Button variant="secondary" onClick={flipEditState}>Cancel</Button> : <Button variant="secondary" onClick={() => {if (onCancelCreate !== undefined) {onCancelCreate();}}}>Cancel</Button>}
+            </ButtonGroup>
+            {!isNewTask ? <Button className="delete-task" variant="danger" onClick={handleDelete}>Delete</Button> : <></>}
             <hr />
-        </form>
+        </Form>
         }
         </>
     );

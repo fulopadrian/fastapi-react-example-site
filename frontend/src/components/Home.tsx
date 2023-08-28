@@ -1,9 +1,10 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import '../App.css';
 import { TaskProps } from '../models/Types';
 import Task from './Task';
 import { getAllTasks } from '../services/Api';
+import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
 
 const Home = () => {
   const [tasks, setTasks] = useState<TaskProps[]>();
@@ -75,12 +76,10 @@ const Home = () => {
 
   return (
     <div className="App">
-      {!tasks ? 
-      "Loading..."
-      :
-      tasks.map(displayTasks)
-    }
-    {!addTask ? <button onClick={flipAddTask}>Add new task</button> : createTask()}
+      <Container>
+        {!tasks ? "Loading..." : tasks.map(displayTasks)}
+        {!addTask ? <Button className="add-task" variant="secondary" onClick={flipAddTask}>+</Button> : createTask()}
+      </Container>
     </div>
   );
 }

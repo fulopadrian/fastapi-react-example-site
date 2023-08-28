@@ -1,0 +1,25 @@
+body {
+  background-color: #222;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: white;
+}
+
+.App {
+  text-align: center;
+}
+
+Button.delete-task {
+  float: right;
+}
+
+Button.add-task {
+  font-size: x-large;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+.task-description {
+  white-space: pre-line;
+}

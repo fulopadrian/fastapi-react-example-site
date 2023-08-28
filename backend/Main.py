@@ -9,8 +9,21 @@ from DBConnection import engine
 from Models import Tasks
 from typing import List
 from typing_extensions import Annotated
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Middleware to handle CORS
+# Note: had to add origins, because otherwise the React fetch did not accepted data
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # API endpoints
 # Root API

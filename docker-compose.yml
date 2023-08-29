@@ -1,0 +1,16 @@
+version: "3"
+services:
+  frontend:
+    image: react-frontend
+    container_name: frontend
+    command: serve -s build
+    depends_on:
+      - backend
+    ports:
+      - 80:3000
+  backend:
+    image: fastapi-backend
+    container_name: backend
+    command: uvicorn Main:app
+    ports:
+      - 8000:8000

@@ -11,6 +11,6 @@ services:
   backend:
     image: fastapi-backend
     container_name: backend
-    command: uvicorn Main:app
+    command: uvicorn Main:app --host 0.0.0.0 --port 8000
     ports:
       - 8000:8000
